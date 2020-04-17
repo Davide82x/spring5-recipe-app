@@ -1,5 +1,6 @@
 package dv.springframework.spring5recipeapp.services;
 
+import dv.springframework.spring5recipeapp.commands.RecipeCommand;
 import dv.springframework.spring5recipeapp.converters.RecipeCommandToRecipe;
 import dv.springframework.spring5recipeapp.converters.RecipeToRecipeCommand;
 import dv.springframework.spring5recipeapp.domain.Recipe;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 class RecipeServiceImplTest {
@@ -52,6 +54,26 @@ class RecipeServiceImplTest {
     }
 
     @Test
+    public void getRecipeCommandByIdTest() throws Exception {
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        Mockito.when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(1L);
+
+        Mockito.when(recipeToRecipeCommand.convert(any())).thenReturn(recipeCommand);
+
+        RecipeCommand commandById = recipeService.findCommandById(1L);
+
+        assertNotNull(commandById);
+        Mockito.verify(recipeRepository, Mockito.times(1)).findById(anyLong());
+        Mockito.verify(recipeRepository, Mockito.never()).findAll();
+    }
+
+    @Test
     void getRecipesTest() {
         Recipe recipe = new Recipe();
         HashSet recipesData = new HashSet();
@@ -63,5 +85,15 @@ class RecipeServiceImplTest {
         assertEquals(recipes.size(),1);
         Mockito.verify(recipeRepository, Mockito.times(1)).findAll();
         Mockito.verify(recipeRepository, Mockito.never()).findById(anyLong());
+    }
+
+    @Test
+    void deleteByIdTest(){
+        //given
+        Long idToDelete = Long.valueOf(2L);
+        //when
+        recipeService.deleteByid(idToDelete);
+        //then
+        Mockito.verify(recipeRepository, Mockito.times(1)).deleteById(anyLong());
     }
 }
