@@ -82,7 +82,10 @@
                 </div>
             </div>
             <div class="card">
-                <div class="card-header">Ingredients</div>
+                <div class="card-header">
+                    <div>Ingredients</div>
+                    <a class="btn btn-primary" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
+                </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
@@ -93,6 +96,7 @@
                             </ul>
                         </div>
                     </div>
+
                 </div>
             </div>
             <div class="card">
