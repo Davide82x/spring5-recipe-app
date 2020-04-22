@@ -1,11 +1,14 @@
 package dv.springframework.spring5recipeapp.controllers;
 
 import dv.springframework.spring5recipeapp.commands.RecipeCommand;
+import dv.springframework.spring5recipeapp.exceptions.NotFoundException;
 import dv.springframework.spring5recipeapp.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @Controller
@@ -48,6 +51,17 @@ public class RecipeController {
         log.debug("Deleting id: " + id);
         recipeService.deleteByid(Long.valueOf(id));
         return "redirect:/";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ModelAndView handleNotFound(Exception exception){
+        log.error("Handling not found exception");
+        log.error(exception.getMessage());
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("404error");
+        modelAndView.addObject("exception", exception);
+        return modelAndView;
     }
 
 }
